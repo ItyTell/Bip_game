@@ -3,33 +3,50 @@ import os
 from math import floor
 
 class Entity(pygame.sprite.Sprite):
-    entitys = []
+
+    entitys = pygame.sprite.Group()
 
     def __init__(self, name, cords) -> None:
-        super.__init__(self)
+        pygame.sprite.Sprite.__init__(self)
         self.name = name
         self.load_imgs()
-        self.rect = cords 
-        self.anim_index = 0
-        self.anim_speed = 0.25
-        Entity.entitys.append(self)
+        self.rect = self.image.get_rect()
+        self.rect.center = cords 
+        Entity.entitys.add(self)
 
     def load_imgs(self):
         self.idl = []
-        path = "imgs"
-        for i in range(10):
-            img = pygame.image.load(path + "\\" + self.name + "\\" + "idl" + "\\" + str(i + 1) + ".bmp").convert_alpha()
-            img = pygame.transform.scale(img, (img.get_width()*3, img.get_height()*3))
-            img.set_colorkey((0, 0, 0))
-            self.idl.append(img)
+        path = "imgs\\player"
+        self.animation = Animation(path)
+        self.image = self.animation.anims["idl"][0]
 
     def update(self, screen):
-        screen.blit(self.idl[floor(self.anim_index)], self.cords)
-        self.anim_index += self.anim_speed
-        self.anim_index -= len(self.idl) if self.anim_index >= len(self.idl) else 0
+        self.image = self.animation.get_img()
+        cords = self.rect.center
+        self.rect = self.image.get_rect()
+        self.rect.center = cords
 
 
 class Animation():
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self, path) -> None:
+        self.anims = {}
+        self.state = 'idl'
+        self.speed = 0.25
+        self.index = 0
+        animations = os.listdir(path= path)
+        for animation in animations:
+            files = os.listdir(path= path + "\\" + animation)
+            files.sort(key=len) 
+            imgs = []
+            for file in files:
+                img = pygame.image.load(path + "\\" + animation + "\\" + file).convert_alpha()
+                img = pygame.transform.scale(img, (img.get_width()*3, img.get_height()*3))
+                img.set_colorkey((0, 0, 0))
+                imgs.append(img)
+            self.anims[animation] = imgs
+    def get_img(self):
+        img = self.anims[self.state][floor(self.index)]
+        self.index += self.speed
+        self.index -= len(self.anims[self.state]) if self.index >= len(self.anims[self.state]) else 0
+        return img

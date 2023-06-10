@@ -16,7 +16,7 @@ class Game:
         self.load_settings()
         self.screen = pygame.display.set_mode(self.screen_params)
         self.clock = pygame.time.Clock()    
-        self.hero = Hero([15, 400])
+        self.hero = Hero([40, 400])
         self.run()
     
     def load_settings(self) -> None:
@@ -25,9 +25,11 @@ class Game:
         self.screen_params = (settings["screen"]["width"], settings["screen"]["height"])
         file.close()
     
-    def drew(self):
-        for entity in Entity.entitys:
-            entity.update(self.screen)
+    def draw(self):
+        self.screen.fill("purple")
+        Entity.entitys.update(self.screen)
+        Entity.entitys.draw(self.screen)
+        pygame.display.flip()
 
     def run(self):
         self.run = True
@@ -35,12 +37,12 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.run = False
-            self.screen.fill("purple")
-            self.drew()
-            pygame.display.flip()
+            self.draw()
             self.clock.tick(60)
         pygame.quit()
 
 
 
 Game()
+
+
