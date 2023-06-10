@@ -1,8 +1,10 @@
 import pygame 
 import moderngl
 import json 
+import os
 
-import characters
+from characters import *
+from entity import *
 
 
 pygame.init()
@@ -14,8 +16,8 @@ class Game:
         self.load_settings()
         self.screen = pygame.display.set_mode(self.screen_params)
         self.clock = pygame.time.Clock()    
-        self.hero = characters.Hero([15, 400])
-        self.ran()
+        self.hero = Hero([15, 400])
+        self.run()
     
     def load_settings(self) -> None:
         with open('settings.json') as file:
@@ -24,19 +26,19 @@ class Game:
         file.close()
     
     def drew(self):
-        self.screen.blit(self.hero.img, self.hero.cords)
-        pygame.display.update()
+        for entity in Entity.entitys:
+            entity.update(self.screen)
 
-    def ran(self):
+    def run(self):
         self.run = True
         while self.run:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.run = False
             self.screen.fill("purple")
+            self.drew()
             pygame.display.flip()
             self.clock.tick(60)
-            self.drew()
         pygame.quit()
 
 
