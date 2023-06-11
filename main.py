@@ -3,7 +3,7 @@ import moderngl
 import json 
 import os
 
-from characters import *
+from player import *
 from entity import *
 from pygame.locals import *
 
@@ -16,7 +16,7 @@ class Game:
         self.load_settings()
         self.screen = pygame.display.set_mode(self.screen_params)
         self.clock = pygame.time.Clock()    
-        self.hero = Hero([40, 400])
+        self.player = Player([40, 400])
         self.run()
     
     def load_settings(self) -> None:
@@ -38,13 +38,15 @@ class Game:
                 if event.type == pygame.QUIT:
                     self.run = False
                 if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        self.run = False
                     if event.key == K_d:
-                        self.hero.move_right()
+                        self.player.move_right()
                     if event.key == K_a:
-                        self.hero.move_left()
+                        self.player.move_left()
                 if event.type == pygame.KEYUP:
                     if event.key == K_d or event.key == K_a:
-                        self.hero.stop_moving()
+                        self.player.stop_moving()
 
             self.draw()
             self.clock.tick(60)
