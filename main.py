@@ -5,7 +5,7 @@ import os
 
 from characters import *
 from entity import *
-
+from pygame.locals import *
 
 pygame.init()
 
@@ -37,9 +37,19 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.run = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == K_d:
+                        self.hero.move_right()
+                if event.type == pygame.KEYUP:
+                    if event.key == K_d:
+                        self.hero.stop_moving()
+
             self.draw()
             self.clock.tick(60)
+        
+        
         pygame.quit()
+
 
 
 
