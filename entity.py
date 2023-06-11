@@ -25,7 +25,12 @@ class Entity(pygame.sprite.Sprite):
     def move_right(self):
         self.moving_right = True
         self.moving_left = False
-        self.animation.change_state('run')
+        self.animation.change_state('run_right')
+
+    def move_left(self):
+        self.moving_right = False 
+        self.moving_left = True
+        self.animation.change_state('run_left')
 
     def stop_moving(self):
         self.moving_right = False

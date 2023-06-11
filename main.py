@@ -40,8 +40,10 @@ class Game:
                 if event.type == pygame.KEYDOWN:
                     if event.key == K_d:
                         self.hero.move_right()
+                    if event.key == K_a:
+                        self.hero.move_left()
                 if event.type == pygame.KEYUP:
-                    if event.key == K_d:
+                    if event.key == K_d or event.key == K_a:
                         self.hero.stop_moving()
 
             self.draw()
