@@ -2,6 +2,24 @@ import pygame
 import os
 from math import floor
 
+
+GRAVITY = 0.25
+
+
+class Ground(pygame.sprite.Sprite):
+
+    def __init__(self, x, y, width, height) -> None:
+        super().__init__()
+        self.rect = pygame.Rect(x, y, width, height)
+        self.image = pygame.Surface((width, height), pygame.SRCALPHA)
+
+
+    def draw(self, screen):
+        pygame.draw.rect(screen, 'blue', self.rect)
+
+
+
+
 class Entity(pygame.sprite.Sprite):
 
     entitys = pygame.sprite.Group()
@@ -13,6 +31,9 @@ class Entity(pygame.sprite.Sprite):
         self.rect.center = cords 
         self.moving_right = False
         self.moving_left = False
+        self.jumping = False
+        self.jump_speed = 2
+        self.speed_y = 0
         self.speed = 5 
         Entity.entitys.add(self)
 
@@ -31,6 +52,29 @@ class Entity(pygame.sprite.Sprite):
         self.moving_right = False 
         self.moving_left = True
         self.animation.change_state('run_left')
+    
+    def jump(self):
+        self.jumping = True
+
+    def land(self):
+        self.jumping = False
+        self.speed_y = 0
+    
+    
+    def verticasl_collision(self, obj):
+        if pygame.sprite.collide_mask(self, obj):
+            print("efwon")
+            self.rect.bottom = obj.rect.top
+            self.land()
+
+    
+
+    def _move(self):
+        x, y = self.rect.center
+        self.image, self.rect = self.animation.get_img()
+        self.rect.center = (x + self.speed * self.moving_right - self.speed * self.moving_left, y + (self.speed_y + GRAVITY / 2))
+        self.speed_y += GRAVITY
+
 
     def stop_moving(self):
         self.moving_right = False
@@ -38,10 +82,8 @@ class Entity(pygame.sprite.Sprite):
         self.animation.change_state('idl')
 
 
-    def update(self, screen):
-        x, y = self.rect.center
-        self.image, self.rect = self.animation.get_img()
-        self.rect.center = (x + self.speed * self.moving_right - self.speed * self.moving_left, y)
+    def update(self):
+        self._move()
 
 
 class Animation():

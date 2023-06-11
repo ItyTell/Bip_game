@@ -17,6 +17,7 @@ class Game:
         self.screen = pygame.display.set_mode(self.screen_params)
         self.clock = pygame.time.Clock()    
         self.player = Player([40, 400])
+        self.ground = Ground(0, 500, 1000, 100)
         self.run()
     
     def load_settings(self) -> None:
@@ -27,8 +28,10 @@ class Game:
     
     def draw(self):
         self.screen.fill("purple")
-        Entity.entitys.update(self.screen)
+        Entity.entitys.update()
+        self.player.verticasl_collision(self.ground)
         Entity.entitys.draw(self.screen)
+        self.ground.draw(self.screen)
         pygame.display.flip()
 
     def run(self):
