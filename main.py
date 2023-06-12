@@ -34,23 +34,25 @@ class Game:
         self.ground.draw(self.screen)
         pygame.display.flip()
 
+    def check_keys(self):
+
+        self.player.check_keys()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.run = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.run = False
+            if event.type == pygame.KEYUP:
+                if event.key == K_d or event.key == K_a:
+                    self.player.stop_moving()
+
+
     def run(self):
         self.run = True
         while self.run:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.run = False
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        self.run = False
-                    if event.key == K_d:
-                        self.player.move_right()
-                    if event.key == K_a:
-                        self.player.move_left()
-                if event.type == pygame.KEYUP:
-                    if event.key == K_d or event.key == K_a:
-                        self.player.stop_moving()
-
+            self.check_keys()
             self.draw()
             self.clock.tick(60)
         
