@@ -32,6 +32,7 @@ class Entity(pygame.sprite.Sprite):
         self.moving_right = False
         self.moving_left = False
         self.jumping = False
+        self.landing = False
         self.jump_speed = 5
         self.speed_y = 0
         self.speed = 5 
@@ -40,38 +41,45 @@ class Entity(pygame.sprite.Sprite):
     def load_imgs(self):
         self.idl = []
         path = "imgs\\player"
-        self.animation = Animation(path)
+        self.animation = Animation(self, path)
         self.image, self.rect = self.animation.get_img()
     
     def move_right(self):
-        if self.jumping:
+        if self.jumping or self.landing:
             return
         self.moving_right = True
         self.moving_left = False
         self.animation.change_state('run_right')
 
     def move_left(self):
-        if self.jumping:
+        if self.jumping or self.landing:
             return
         self.moving_right = False 
         self.moving_left = True
         self.animation.change_state('run_left')
     
     def jump(self):
-        if  not self.jumping:
-            self.speed_y = -self.jump_speed
-            self.jumping = True
-            self.animation.change_state('jump')
+        if  self.jumping or self.landing:
+            return
+        self.speed_y = -self.jump_speed
+        self.jumping = True
+        self.animation.change_state('jump_right')
+        if self.moving_left:
+            self.animation.change_state('jump_left')
+
 
     def land(self):
         if self.jumping:
             self.jumping = False
-            self.stop_moving()
-            if pygame.key.get_pressed()[pygame.K_d]:
-                self.move_right()
-            if pygame.key.get_pressed()[pygame.K_a]:
-                self.move_left()
+            self.landing = True
+            self.animation.change_state('land_left' if self.moving_left else 'land_right')
+            self.moving_right = False
+            self.moving_left = False
         self.speed_y = 0
+    
+    def stop_landing(self):
+        self.landing = False
+
     
     
     def verticasl_collision(self, obj):
@@ -93,7 +101,7 @@ class Entity(pygame.sprite.Sprite):
 
 
     def stop_moving(self):
-        if self.jumping:
+        if self.jumping or self.landing:
             return
         self.moving_right = False
         self.moving_left = False
@@ -106,12 +114,13 @@ class Entity(pygame.sprite.Sprite):
 
 class Animation():
 
-    def __init__(self, path) -> None:
+    def __init__(self, entity, path) -> None:
         self.anims = {}
         self.rects = {}
         self.state = 'idl'
         self.speed = 0.25
         self.index = 0
+        self.entity = entity
         self._load_anims(path)
         
     def _load_anims(self, path):
@@ -133,11 +142,20 @@ class Animation():
 
     def get_img(self,  jumping_state = 0):
         """if not jumping, jumping state is 0 else its 1 when starts jumping, 2 when its near the top point and 3 if the entity is falling"""
-        if not jumping_state:
+        if 'land' in self.state:
+            img = self.anims[self.state][floor(self.index)]
+            rect = self.rects[self.state][floor(self.index)]
+            self.index += self.speed
+            if floor(self.index) > len(self.anims[self.state]) - 1:
+                self.change_state('idl')
+                self.entity.stop_landing()
+
+        elif not jumping_state:
             img = self.anims[self.state][floor(self.index)]
             rect = self.rects[self.state][floor(self.index)]
             self.index += self.speed
             self.index -= len(self.anims[self.state]) if self.index >= len(self.anims[self.state]) else 0
+
         else:
             img = self.anims[self.state][jumping_state - 1]
             rect = self.rects[self.state][jumping_state - 1]
