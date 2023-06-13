@@ -17,7 +17,7 @@ class Game:
         self.screen = pygame.display.set_mode(self.screen_params)
         self.clock = pygame.time.Clock()    
         self.player = Player([40, 400])
-        self.ground = Ground(0, 500, 1000, 100)
+        self.ground = Ground(0, 740, 1000, 50)
         self.run()
     
     def load_settings(self) -> None:
