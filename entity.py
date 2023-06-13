@@ -34,9 +34,9 @@ class Entity(pygame.sprite.Sprite):
         self.moving_left = False
         self.jumping = False
         self.landing = False
-        self.jump_speed = 5
+        self.jump_speed = 10
         self.speed_y = 0
-        self.speed = 5 
+        self.speed = 10 
         Entity.entitys.add(self)
 
     def load_imgs(self):

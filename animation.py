@@ -12,7 +12,7 @@ class Animation():
         self.rects = []
         for file in files:
             img = pygame.image.load(path + "\\" + file).convert_alpha()
-            img = pygame.transform.scale(img, (img.get_width()*3, img.get_height()*3))
+            img = pygame.transform.scale(img, (img.get_width()*4, img.get_height()*4))
             img.set_colorkey((0, 0, 0))
             self.imgs.append(img)
             self.rects.append(img.get_rect())
