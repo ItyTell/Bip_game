@@ -10,6 +10,10 @@ from pygame.locals import *
 pygame.init()
 
 
+#path
+BACKGROUND_PATH = r"C:\Users\nickk\Bip_game\imgs\background"
+
+
 class Game:
 
     def __init__(self) -> None:
@@ -19,12 +23,16 @@ class Game:
         self.player = Player([40, 400])
         self.ground = Ground(-10000, 740, 100000, 50)
 
-        self.background = pygame.image.load(r"C:\Users\nickk\Bip_game\imgs\background\desert\background.png").convert_alpha()
-        self.background = pygame.transform.scale(self.background, (self.background.get_width() * 0.75, self.background.get_height() * 0.75))
+        self.background = pygame.image.load(BACKGROUND_PATH + r"\desert\background.png").convert_alpha()
+
+        bakcground_scale = 0.75
+
+        self.background = pygame.transform.scale(self.background, (self.background.get_width() * bakcground_scale, 
+                                                                   self.background.get_height() * bakcground_scale))
 
         self.background.set_colorkey((0, 0, 0))
         self.background_rect = self.background.get_rect()
-        self.background_rect.center = (640, 360)
+        self.background_rect.center = [i / 2 for i in self.screen_params]
 
 
         self.run()
