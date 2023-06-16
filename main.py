@@ -18,10 +18,9 @@ class Game:
 
     def __init__(self) -> None:
         self.load_settings()
-        self.screen = pygame.display.set_mode(self.screen_params)
-        self.clock = pygame.time.Clock()    
+        self.screen = pygame.display.set_mode(self.screen_params); self.clock = pygame.time.Clock()    
         self.player = Player([40, 400])
-        self.ground = Ground(-10000, 740, 100000, 50)
+        self.ground = Ground(-10000, 740, 100000, 50) # -inf downspot +inf some_nomber = 50 (just not 0) 
 
         self.background = pygame.image.load(BACKGROUND_PATH + r"\desert\background.png").convert_alpha()
 
@@ -41,15 +40,14 @@ class Game:
         with open('settings.json') as file:
             settings = json.loads(file.read())
         self.screen_params = (settings["screen"]["width"], settings["screen"]["height"])
+        self.fps = settings["fps"]
         file.close()
     
     def draw(self):
-        self.screen.fill("purple")
         Entity.entitys.update()
         self.player.verticasl_collision(self.ground)
         self.screen.blit(self.background, self.background_rect)
         Entity.entitys.draw(self.screen)
-        self.ground.draw(self.screen)
         pygame.display.flip()
 
     def check_keys(self):
@@ -72,7 +70,7 @@ class Game:
         while self.run:
             self.check_keys()
             self.draw()
-            self.clock.tick(60)
+            self.clock.tick(self.fps)
         
         
         pygame.quit()
